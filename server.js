@@ -69,8 +69,10 @@ myDB(async client => {
     // Allow a new user on our site to register an account
     app.route('/register').post(
         (req, res, next) => {
+            // Implement saving a hash
+            const hash = bcrypt.hashSync(req.body.password, 12);
             // Check if user exists already
-            myDataBase.findOne({ username: req.body.username }, function(err, user) {
+            myDataBase.findOne({ username: req.body.username }, (err, user) => {
                 if (err) {
                     next(err);
                 } else if (user) {
@@ -78,7 +80,7 @@ myDB(async client => {
                 } else {
                     myDataBase.insertOne({
                         username: req.body.username,
-                        password: req.body.password
+                        password: hash
                     },
                         (err, doc) => {
                             if (err) {
@@ -123,7 +125,10 @@ myDB(async client => {
                 console.log('User '+ username +' attempted to log in.');
                 if (err) { return done(err); }
                 if (!user) { return done(null, false); }
-                if (password !== user.password) { return done(null, false); }
+                // if (password !== user.password) { return done(null, false); }
+                if (!bcrypt.compareSync(password, user.password)) {
+                    return done(null, false);
+                }
                 return done(null, user);
             });
         }
