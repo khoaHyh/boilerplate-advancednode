@@ -42,8 +42,21 @@ myDB(async client => {
     //Change the response to render the Pug template
         res.render('pug', {
             title: 'Connected to Database',
-            message: 'Please login'
+            message: 'Please login',
+            showLogin: true
         });
+    });
+
+    // Authenticate on route /login
+    app.route('/login').post(passport.authenticate('local', 
+        { failureRedirect: '/' }), (req, res) => {
+            res.redirect('/profile');
+    });
+
+    // If authentication middleware passes, redirect user to /profile
+    // If authentication was successful, the user object will be saved in req.user
+    app.route('/profile').get((req, res) => {
+        res.render(process.cwd() + '/views/pug/profile');
     });
 
     // Convert object contents into a key
