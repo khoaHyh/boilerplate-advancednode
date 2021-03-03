@@ -8,6 +8,7 @@ const session = require('express-session');
 const passport = require('passport');
 const ObjectID = require('mongodb').ObjectID;
 const LocalStrategy = require('passport-local');
+const bcrypt = require('bcrypt');
 
 // Implement a Root-Level Request Logger Middleware
 app.use((req, res, next) => {
