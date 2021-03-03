@@ -53,9 +53,18 @@ myDB(async client => {
             res.redirect('/profile');
     });
 
+    // Middleware to check if a user is authenticated
+    // Prevents users going to /profile whether they authenticated or not
+    const ensureAuthenticated = (req, res, next) => {
+        if (req.isAuthenticated()) {
+            return next();
+        }
+        res.redirect('/');
+    };
+
     // If authentication middleware passes, redirect user to /profile
     // If authentication was successful, the user object will be saved in req.user
-    app.route('/profile').get((req, res) => {
+    app.route('/profile').get(ensureAuthenticated, (req, res) => {
         res.render(process.cwd() + '/views/pug/profile');
     });
 
