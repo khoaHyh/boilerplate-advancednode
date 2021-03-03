@@ -53,19 +53,21 @@ myDB(async client => {
             res.redirect('/profile');
     });
 
-    // Middleware to check if a user is authenticated
-    // Prevents users going to /profile whether they authenticated or not
-    const ensureAuthenticated = (req, res, next) => {
-        if (req.isAuthenticated()) {
-            return next();
-        }
-        res.redirect('/');
-    };
-
     // If authentication middleware passes, redirect user to /profile
     // If authentication was successful, the user object will be saved in req.user
     app.route('/profile').get(ensureAuthenticated, (req, res) => {
         res.render(process.cwd() + '/views/pug/profile', { username: req.user.username });
+    });
+
+    // Unauthenticate user
+    app.route('/logout').get((req, res) => {
+        req.logout();
+        res.redirect('/');
+    });
+
+    // Handle missing pages (404)
+    app.use((req, res, next) => {
+        res.status(404).type('text').send('Not Found');
     });
 
     // Convert object contents into a key
@@ -98,6 +100,15 @@ myDB(async client => {
         res.render('pug', { title: e, message: 'Unable to login' });
     });
 });
+
+// Middleware to check if a user is authenticated
+// Prevents users going to /profile whether they authenticated or not
+const ensureAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/');
+};
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
