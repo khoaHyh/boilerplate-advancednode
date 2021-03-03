@@ -65,7 +65,7 @@ myDB(async client => {
     // If authentication middleware passes, redirect user to /profile
     // If authentication was successful, the user object will be saved in req.user
     app.route('/profile').get(ensureAuthenticated, (req, res) => {
-        res.render(process.cwd() + '/views/pug/profile');
+        res.render(process.cwd() + '/views/pug/profile', { username: req.user.username });
     });
 
     // Convert object contents into a key
