@@ -7,6 +7,7 @@ const app = express();
 const session = require('express-session');
 const passport = require('passport');
 const ObjectID = require('mongodb').ObjectID;
+const LocalStrategy = require('passport-local');
 
 // Implement a Root-Level Request Logger Middleware
 app.use((req, res, next) => {
@@ -57,6 +58,19 @@ myDB(async client => {
             done(null, doc);
         });
     });
+
+    // Define process to use when we try to authenticate someone locally
+    passport.use(new LocalStrategy(
+        (username, password, done) => {
+            myDataBase.findOne({ username: username }, (err, user) => {
+                console.log('User '+ username +' attempted to log in.');
+                if (err) { return done(err); }
+                if (!user) { return done(null, false); }
+                if (password !== user.password) { return done(null, false); }
+                return done(null, user);
+            });
+        }
+    ));
 }).catch(e => {
     app.route('/').get((req, res) => {
         res.render('pug', { title: e, message: 'Unable to login' });
