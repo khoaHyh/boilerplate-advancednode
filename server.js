@@ -43,7 +43,8 @@ myDB(async client => {
         res.render('pug', {
             title: 'Connected to Database',
             message: 'Please login',
-            showLogin: true
+            showLogin: true,
+            showRegistration: true
         });
     });
 
@@ -64,6 +65,38 @@ myDB(async client => {
         req.logout();
         res.redirect('/');
     });
+    
+    // Allow a new user on our site to register an account
+    app.route('/register').post(
+        (req, res, next) => {
+            // Check if user exists already
+            myDataBase.findOne({ username: req.body.username }, function(err, user) {
+                if (err) {
+                    next(err);
+                } else if (user) {
+                    res.redirect('/');
+                } else {
+                    myDataBase.insertOne({
+                        username: req.body.username,
+                        password: req.body.password
+                    },
+                        (err, doc) => {
+                            if (err) {
+                                res.redirect('/');
+                            } else {
+                                // The inserted document is held within
+                                // the ops property of the doc
+                                next(null, doc.ops[0]);
+                            }
+                        }
+                    );
+                }
+            });
+        },
+        passport.authenticate('local', { failureRedirect: '/' }), (req, res, next) => {
+            res.redirect('/profile');
+        }
+    );
 
     // Handle missing pages (404)
     app.use((req, res, next) => {
