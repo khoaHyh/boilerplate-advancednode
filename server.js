@@ -20,8 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.route('/').get((req, res) => {
-    // set path to views/pug directory
-    res.render('pug');
+    // set path to views/pug directory and pass variables
+    res.render(process.cwd() + '/views/pug/index', {title: 'Hello', message: 'Please login'});
 });
 
 const PORT = process.env.PORT || 3000;
