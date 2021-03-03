@@ -53,7 +53,8 @@ myDB(async client => {
     // Convert key into original object
     passport.deserializeUser((id, done) => {
         myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
-            done(null, null);
+            if (err) return console.error(`myDataBase.findOne error: ${err}`);
+            done(null, doc);
         });
     });
 }).catch(e => {
