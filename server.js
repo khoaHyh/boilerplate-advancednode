@@ -15,6 +15,7 @@ const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo')(session);
 const URI = process.env.MONGO_URI;
 const store = new MongoStore({ url: URI });
+const onAuthorize = require('./utilities/onAuthorize');
 
 // Implement a Root-Level Request Logger Middleware
 app.use((req, res, next) => {
@@ -50,8 +51,8 @@ io.use(
         key: 'express.sid',
         secret: process.env.SESSION_SECRET,
         store: store,
-        success: onAuthorizeSuccess,
-        fail: onAuthorizeFail
+        success: onAuthorize.success,
+        fail: onAuthorize.fail 
     })
 );
 
@@ -84,16 +85,16 @@ myDB(async client => {
     });
 });
 
-const onAuthorizeSuccess = (data, accept) => {
-    console.log('successful connection to socket.io');
-    accept(null, true);
-}
-
-const onAuthorizeFail = (data, message, error, accept) => {
-    if (error) throw new Error(message);
-    console.log('failed connection to socket.io:', message);
-    accept(null, false);
-}
+//const onAuthorizeSuccess = (data, accept) => {
+//    console.log('successful connection to socket.io');
+//    accept(null, true);
+//}
+//
+//const onAuthorizeFail = (data, message, error, accept) => {
+//    if (error) throw new Error(message);
+//    console.log('failed connection to socket.io:', message);
+//    accept(null, false);
+//}
 
 const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
