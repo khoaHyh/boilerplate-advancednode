@@ -74,8 +74,12 @@ myDB(async client => {
             currentUsers,
             connected: true
         });
+        // Listen to the socket for the event 'chat message' and emit an event to
+        // all sockets some data once the event is received
+        socket.on('chat message', (message) => {
+            io.emit('chat message', { name: socket.request.user.name, message });
+        });
         console.log('user ' + socket.request.user.name + ' connected');
-            
         // Listen for disconnections from our server
         socket.on('disconnect', () => {
             --currentUsers;
