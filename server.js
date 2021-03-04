@@ -42,9 +42,17 @@ myDB(async client => {
     routes(app, myDataBase);
     auth(app, myDataBase);
 
+    // Keep track of users
+    let currentUsers = 0;
     // Listen for connections to our server
     io.on('connection', socket => {
-          console.log('A user has connected');
+        console.log('A user has connected');
+        ++currentUsers;
+        // Emit the event
+        io.emit('user count', currentUsers);
+        socket.on('user count', (data) => {
+            console.log(data);
+        });
     });
 }).catch(e => {
     app.route('/').get((req, res) => {
