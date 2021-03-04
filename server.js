@@ -12,7 +12,7 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 const passportSocketIo = require('passport.socketio');
 const cookieParser = require('cookie-parser');
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo')(session); // Latest version breaks app
 const URI = process.env.MONGO_URI;
 const store = new MongoStore({ url: URI });
 const onAuthorize = require('./utilities/onAuthorize');
@@ -69,13 +69,21 @@ myDB(async client => {
     // Listen for connections to our server
     io.on('connection', socket => {
         ++currentUsers;
-        io.emit('user count', currentUsers);
+        io.emit('user', {
+            name: socket.request.user.name,
+            currentUsers,
+            connected: true
+        });
         console.log('user ' + socket.request.user.name + ' connected');
             
         // Listen for disconnections from our server
         socket.on('disconnect', () => {
             --currentUsers;
-            io.emit('user count', currentUsers);
+            io.emit('user', {
+                name: socket.request.user.name,
+                currentUsers,
+                connected: false
+            });
             console.log('A user has disconnected');
         });
     });
