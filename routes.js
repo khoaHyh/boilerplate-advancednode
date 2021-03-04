@@ -9,7 +9,8 @@ const routes = (app, myDatabase) => {
             title: 'Connected to Database',
             message: 'Please login',
             showLogin: true,
-            showRegistration: true
+            showRegistration: true,
+            showSocialAuth: true
         });
     });
     // Authenticate on route /login
@@ -60,6 +61,12 @@ const routes = (app, myDatabase) => {
             res.redirect('/profile');
         }
     );
+    // Social authentication using Github strategy
+    app.route('/auth/github').get(passport.authenticate('github'));
+    app.route('/auth/github/callback').get(passport.authenticate('github', { failureRedirect: '/' }), 
+        (req, res) => {
+            res.redirect('/profile');
+    });
     // Handle missing pages (404)
     app.use((req, res, next) => {
         res.status(404).type('text').send('Not Found');
