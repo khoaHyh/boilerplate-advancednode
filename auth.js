@@ -35,13 +35,14 @@ const auth = (app, myDatabase) => {
    
     // Github authentication strategy
     passport.use(new GitHubStrategy({
-          clientID: process.env.GITHUB_CLIENT_ID,
-          clientSecret: process.env.GITHUB_CLIENT_SECRET,
-          callbackURL: 'https://advancednode-khoahyh.herokuapp.com/auth/github/callback' 
-    },
+            clientID: process.env.GITHUB_CLIENT_ID,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET,
+            callbackURL: 'https://advancednode-khoahyh.herokuapp.com/auth/github/callback' 
+        },
         (accessToken, refreshToken, profile, cb) => {
             console.log(profile);
             // Database logic here with callback containing our user object
+            console.log(myDatabase);
             myDataBase.findOneAndUpdate(
                 { id: profile.id },
                 {
