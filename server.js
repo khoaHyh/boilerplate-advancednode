@@ -8,6 +8,8 @@ const session = require('express-session');
 const passport = require('passport');
 const routes = require('./routes');
 const auth = require('./auth');
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 
 // Implement a Root-Level Request Logger Middleware
 app.use((req, res, next) => {
@@ -39,6 +41,11 @@ myDB(async client => {
 
     routes(app, myDataBase);
     auth(app, myDataBase);
+
+    // Listen for connections to our server
+    io.on('connection', socket => {
+          console.log('A user has connected');
+    });
 }).catch(e => {
     app.route('/').get((req, res) => {
         res.render('pug', { title: e, message: 'Unable to login' });
@@ -46,6 +53,6 @@ myDB(async client => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+http.listen(PORT, () => {
     console.log('Listening on port ' + PORT);
 });

@@ -23,6 +23,10 @@ const routes = (app, myDatabase) => {
     app.route('/profile').get(ensureAuthenticated, (req, res) => {
         res.render(process.cwd() + '/views/pug/profile', { username: req.user.username });
     });
+    // Renders chat.pug with user object
+    app.route('/chat').get(ensureAuthenticated, (req, res) => {
+        res.render(process.cwd() + '/views/pug/chat', { user: req.user });
+    });
     // Unauthenticate user
     app.route('/logout').get((req, res) => {
         req.logout();
@@ -65,7 +69,8 @@ const routes = (app, myDatabase) => {
     app.route('/auth/github').get(passport.authenticate('github'));
     app.route('/auth/github/callback').get(passport.authenticate('github', { failureRedirect: '/' }), 
         (req, res) => {
-            res.redirect('/profile');
+            req.session.user_id = req.user.id
+            res.redirect('/chat');
     });
     // Handle missing pages (404)
     app.use((req, res, next) => {
