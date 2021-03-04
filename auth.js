@@ -1,7 +1,9 @@
+require('dotenv').config();
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const bcrypt = require('bcrypt');
 const ObjectID = require('mongodb').ObjectID;
+const GitHubStrategy = require('passport-github').Strategy;
 
 const auth = (app, myDatabase) => {
     // Convert object contents into a key
@@ -28,6 +30,18 @@ const auth = (app, myDatabase) => {
                 }
                 return done(null, user);
             });
+        }
+    ));
+   
+    // Github authentication strategy
+    passport.use(new GitHubStrategy({
+          clientID: process.env.GITHUB_CLIENT_ID,
+          clientSecret: process.env.GITHUB_CLIENT_SECRET,
+          callbackURL: 'https://advancednode-khoahyh.herokuapp.com/auth/github/callback' 
+    },
+        (accessToken, refreshToken, profile, cb) => {
+            console.log(profile);
+            //Database logic here with callback containing our user object
         }
     ));
 }
