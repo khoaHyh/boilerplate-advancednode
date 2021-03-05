@@ -4,7 +4,7 @@ const { MongoClient } = require('mongodb');
 
 const main = async (callback) => {
     const URI = process.env.MONGO_URI; // Declare MONGO_URI in your .env file
-    const client = new MongoClient(URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+    const client = new MongoClient(URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
     try {
         // Connect to the MongoDB cluster
