@@ -15,7 +15,6 @@ const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo')(session); // Latest version breaks app
 const URI = process.env.MONGO_URI;
 const store = new MongoStore({ url: URI });
-const onAuthorize = require('./utilities/onAuthorize');
 
 // Implement a Root-Level Request Logger Middleware
 app.use((req, res, next) => {
@@ -30,8 +29,6 @@ fccTesting(app); //For FCC testing purposes
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Set up our express app to use session
 app.use(session({
@@ -43,6 +40,9 @@ app.use(session({
     store: store
 }));
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Parse and decode the cookie that contains the passport session then deserialize
 // to obtain user object
 io.use(
@@ -51,15 +51,16 @@ io.use(
         key: 'express.sid',
         secret: process.env.SESSION_SECRET,
         store: store,
-        success: onAuthorize.success,
-        fail: onAuthorize.fail 
+        success: onAuthorizeSuccess,
+        fail: onAuthorizeFail 
     })
 );
 
 
 // Connect to our db and start listening for requests
 myDB(async client => {
-    const myDataBase = await client.db('anodedb').collection('users');
+    const myDataBase = await client.db('database').collection('users');
+    console.log(myDataBase);
 
     routes(app, myDataBase);
     auth(app, myDataBase);
@@ -96,6 +97,17 @@ myDB(async client => {
         res.render('pug', { title: e, message: 'Unable to login' });
     });
 });
+
+function onAuthorizeSuccess(data, accept) {
+    console.log('successful connection to socket.io');
+    accept(null, true);
+}
+
+function onAuthorizeFail(data, message, error, accept) {
+    if (error) throw new Error(message);
+    console.log('failed connection to socket.io:', message);
+    accept(null, false);
+}
 
 const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
