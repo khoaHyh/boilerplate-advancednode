@@ -16,16 +16,16 @@ const routes = (app, myDatabase) => {
     // Authenticate on route /login
     app.route('/login').post(passport.authenticate('local', 
         { failureRedirect: '/' }), (req, res) => {
-            res.redirect('/profile');
+            res.redirect('/chat');
     });
     // If authentication middleware passes, redirect user to /profile
     // If authentication was successful, the user object will be saved in req.user
     app.route('/profile').get(ensureAuthenticated, (req, res) => {
-        res.render(process.cwd() + '/views/pug/profile', { username: req.user.username });
+        res.render('pug/profile', { username: req.user.username });
     });
     // Renders chat.pug with user object
     app.route('/chat').get(ensureAuthenticated, (req, res) => {
-        res.render(process.cwd() + '/views/pug/chat', { user: req.user });
+        res.render('pug/chat', { user: req.user });
     });
     // Unauthenticate user
     app.route('/logout').get((req, res) => {
@@ -47,17 +47,15 @@ const routes = (app, myDatabase) => {
                     myDataBase.insertOne({
                         username: req.body.username,
                         password: hash
-                    },
-                        (err, doc) => {
-                            if (err) {
-                                res.redirect('/');
-                            } else {
-                                // The inserted document is held within
-                                // the ops property of the doc
-                                next(null, doc.ops[0]);
-                            }
+                    }, (err, doc) => {
+                        if (err) {
+                            res.redirect('/');
+                        } else {
+                            // The inserted document is held within
+                            // the ops property of the doc
+                            next(null, doc.ops[0]);
                         }
-                    );
+                    });
                 }
             });
         },
@@ -80,7 +78,7 @@ const routes = (app, myDatabase) => {
 
 // Middleware to check if a user is authenticated
 // Prevents users going to /profile whether they authenticated or not
-const ensureAuthenticated = (req, res, next) => {
+function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
