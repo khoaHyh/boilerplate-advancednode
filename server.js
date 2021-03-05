@@ -59,7 +59,7 @@ io.use(
 
 // Connect to our db and start listening for requests
 myDB(async client => {
-    const myDataBase = await client.db('database').collection('users');
+    const myDataBase = await client.db('anodedb').collection('users');
 
     routes(app, myDataBase);
     auth(app, myDataBase);
