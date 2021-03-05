@@ -1,7 +1,7 @@
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 
-const routes = (app, myDatabase) => {
+module.exports = ((app, myDatabase) => {
     // Be sure to change the title
     app.route('/').get((req, res) => {
     //Change the response to render the Pug template
@@ -74,7 +74,7 @@ const routes = (app, myDatabase) => {
     app.use((req, res, next) => {
         res.status(404).type('text').send('Not Found');
     });
-}
+});
 
 // Middleware to check if a user is authenticated
 // Prevents users going to /profile whether they authenticated or not
@@ -84,5 +84,3 @@ function ensureAuthenticated(req, res, next) {
     }
     res.redirect('/');
 };
-
-module.exports = routes

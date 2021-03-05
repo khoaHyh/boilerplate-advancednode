@@ -60,7 +60,9 @@ io.use(
 // Connect to our db and start listening for requests
 myDB(async client => {
     const myDataBase = await client.db('database').collection('users');
-    console.log(myDataBase);
+
+    const logDB = await myDataBase.find({});
+    console.log(logDB);
 
     routes(app, myDataBase);
     auth(app, myDataBase);
