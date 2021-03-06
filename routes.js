@@ -60,7 +60,7 @@ module.exports = (app, myDataBase) => {
             });
         },
         passport.authenticate('local', { failureRedirect: '/' }), (req, res, next) => {
-            res.redirect('/profile');
+            res.redirect('/chat');
         }
     );
     // Social authentication using Github strategy

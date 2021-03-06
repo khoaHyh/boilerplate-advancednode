@@ -111,17 +111,6 @@ myDB(async client => {
     });
 });
 
-function onAuthorizeSuccess(data, accept) {
-    console.log('successful connection to socket.io');
-    accept(null, true);
-}
-
-function onAuthorizeFail(data, message, error, accept) {
-    if (error) throw new Error(message);
-    console.log('failed connection to socket.io:', message);
-    accept(null, false);
-}
-
 const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
     console.log('Listening on port ' + PORT);
