@@ -61,8 +61,18 @@ io.use(
 myDB(async client => {
     const myDataBase = await client.db('database').collection('users');
 
-    const logDB = await myDataBase.find({});
-    console.log(logDB);
+//    app.route('/api/test').get(async (req, res) => {
+//        let { username } = req.query;
+//
+//        let found = await myDataBase.findOne({ username: username });
+//        if (!found) {
+//            console.log(`!found: ${found.username}`);
+//            return res.json({ username: found.username });
+//        } else {
+//            console.log(found);
+//            return res.json({ username: found.username });
+//        }
+//    });
 
     routes(app, myDataBase);
     auth(app, myDataBase);
