@@ -84,16 +84,16 @@ myDB(async client => {
     io.on('connection', socket => {
         ++currentUsers;
         io.emit('user', {
-            name: socket.request.user.name,
+            name: socket.request.user.username,
             currentUsers,
             connected: true
         });
         // Listen to the socket for the event 'chat message' and emit an event to
         // all sockets some data once the event is received
         socket.on('chat message', (message) => {
-            io.emit('chat message', { name: socket.request.user.name, message });
+            io.emit('chat message', { name: socket.request.user.username, message });
         });
-        console.log('user ' + socket.request.user.name + ' connected');
+        console.log('user ' + socket.request.user.username + ' connected');
         // Listen for disconnections from our server
         socket.on('disconnect', () => {
             --currentUsers;
