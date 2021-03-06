@@ -78,7 +78,7 @@ module.exports = (app, myDataBase) => {
 
 // Middleware to check if a user is authenticated
 // Prevents users going to /profile whether they authenticated or not
-function ensureAuthenticated(req, res, next) {
+const ensureAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) return next();
     res.redirect('/');
 };

@@ -15,6 +15,7 @@ const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo')(session); // Latest version breaks app
 const URI = process.env.MONGO_URI;
 const store = new MongoStore({ url: URI });
+const onAuthorize = require('./utilities/onAuthorize');
 
 // Implement a Root-Level Request Logger Middleware
 app.use((req, res, next) => {
@@ -51,8 +52,8 @@ io.use(
         key: 'express.sid',
         secret: process.env.SESSION_SECRET,
         store: store,
-        success: onAuthorizeSuccess,
-        fail: onAuthorizeFail 
+        success: onAuthorize.success,
+        fail: onAuthorize.fail 
     })
 );
 
